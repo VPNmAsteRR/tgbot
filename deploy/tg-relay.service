@@ -1,0 +1,32 @@
+[Unit]
+Description=Telegram DM relay bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tg-relay
+Group=tg-relay
+WorkingDirectory=/opt/tg-relay
+EnvironmentFile=/etc/tg-relay.env
+ExecStart=/usr/bin/python3 /opt/tg-relay/bot.py --data-dir /var/lib/tg-relay
+Restart=always
+RestartSec=5
+
+# безопасность: код только на чтение, писать можно лишь в state-каталог
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/tg-relay
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
